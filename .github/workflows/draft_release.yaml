@@ -6,14 +6,32 @@ on:
       - "v[0-9]+.[0-9]+.[0-9]+"
 
 jobs:
-  test_and_build:
+  build:
     name: Test, Build and Release
     runs-on: ubuntu-latest
     permissions:
       contents: write
+
     steps:
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
       - uses: actions/checkout@v4
-      - uses: eladleev/KeyToField-smt/.github/workflows/test_and_build.yaml@main
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: "zulu"
+          java-version: "8"
+          cache: maven
+
+      - name: Maven Set Version
+        run: mvn versions:set -DnewVersion=${{ steps.get_version.outputs.VERSION }} -B --file pom.xml
+
+      - name: Run the Maven verify phase
+        run: mvn --batch-mode --update-snapshots verify
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
