@@ -1,0 +1,16 @@
+name: Create Draft Release
+
+on:
+  pull_request:
+    branches: [main]
+    paths-ignore: ["README.md", "LICENSE", "CONTRIBUTING.md"]
+
+jobs:
+  test_and_build:
+    name: "[PR] Test & Build"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/test_and_build.yaml

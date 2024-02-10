@@ -1,0 +1,25 @@
+name: Create a Draft Release
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+jobs:
+  test_and_build:
+    name: Test, Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/workflows/test_and_build.yaml
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: "${{ steps.get_version.outputs.VERSION }}-release"
+          generate_release_notes: true
+          draft: true
+          prerelease: false
+          files: target/key-to-field-transform-${{ steps.get_version.outputs.VERSION }}.jar
