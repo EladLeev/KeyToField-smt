@@ -1,4 +1,4 @@
-name: Create Draft Release
+name: Create a PR
 
 on:
   pull_request:
