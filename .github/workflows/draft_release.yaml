@@ -13,7 +13,7 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/workflows/test_and_build.yaml
+      - uses: eladleev/KeyToField-smt/.github/workflows/test_and_build.yaml@main
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
