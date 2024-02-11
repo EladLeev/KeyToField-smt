@@ -35,7 +35,7 @@ services:
       CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
 
   schema_registry:
-    image: confluentinc/cp-schema-registry:3.3.3
+    image: confluentinc/cp-schema-registry:7.6.0
     hostname: schema_registry
     container_name: schema_registry
     depends_on:
