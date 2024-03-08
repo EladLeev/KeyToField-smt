@@ -33,7 +33,7 @@ jobs:
         run: mvn --batch-mode --update-snapshots verify
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: "${{ steps.get_version.outputs.VERSION }}-release"
