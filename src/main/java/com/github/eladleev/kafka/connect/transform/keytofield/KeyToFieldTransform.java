@@ -123,8 +123,9 @@ public class KeyToFieldTransform<R extends ConnectRecord<R>> implements Transfor
     private String extractKeyAsString(Schema schema, Object key) {
         LOGGER.trace("Extracting key as string");
 
+
         if (!(key instanceof Struct)) {
-            throw new IllegalArgumentException("Key must be of type Struct");
+            return key.toString();
         }
 
         Struct keyStruct = (Struct) key;

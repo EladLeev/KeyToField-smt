@@ -171,7 +171,7 @@ public class KeyToFieldTransformTest {
         System.out.println("[Test] applyWithComplexSchemaTest Done");
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void applyWithNonStructKeySchemaTest() {
         xform.configure(Collections.singletonMap("field.name", "primaryKey"));
 

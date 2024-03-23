@@ -7,7 +7,7 @@
     <!-- Define project coordinates -->
     <groupId>com.github.eladleev.kafka.connect.transform</groupId>
     <artifactId>key-to-field-transform</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <!-- Define project properties -->

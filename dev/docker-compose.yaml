@@ -1,4 +1,3 @@
-
 version: '2'
 services:
   zookeeper:
@@ -48,6 +47,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
       SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_ORIGIN: '*'
       SCHEMA_REGISTRY_ACCESS_CONTROL_ALLOW_METHODS: 'GET,POST,PUT,OPTIONS'
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'broker-1:9092'
 
   connect:
     image: confluentinc/cp-kafka-connect:7.6.0
@@ -79,6 +79,17 @@ services:
       CONNECT_ZOOKEEPER_CONNECT: 'zookeeper:2181'
     volumes:
       - ./kafka-connect:/etc/kafka-connect/jars
+    command:
+      - bash
+      - -c
+      - |
+        echo "Installing Connector"
+        confluent-hub install --no-prompt confluentinc/kafka-connect-jdbc:10.7.6
+        #
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run &
+        #
+        sleep infinity
 
   rest-proxy:
     image: confluentinc/cp-kafka-rest
@@ -101,6 +112,7 @@ services:
 
   db:
     image: mujz/pagila
+    # image: synthesizedio/pagila
     environment:
       - POSTGRES_PASSWORD=sample
       - POSTGRES_USER=sample
@@ -118,25 +130,7 @@ services:
       KAFKA_BROKERS: 'broker-1:9092'
       KAFKA_SCHEMAREGISTRY_ENABLED: true
       KAFKA_SCHEMAREGISTRY_URLS: 'http://schema_registry:8081'
+      CONNECT_ENABLED: true
+      CONNECT_CLUSTERS_NAME: 'connect'
+      CONNECT_CLUSTERS_URL: 'http://connect:8083'
     restart: unless-stopped
-
-  connect-ui:
-    image: landoop/kafka-connect-ui
-    container_name: connect-ui
-    depends_on:
-      - connect
-    ports:
-      - "8001:8000"
-    environment:
-      - "CONNECT_URL=http://connect:8083"
-
-  schema-registry-ui:
-    image: landoop/schema-registry-ui
-    hostname: schema-registry-ui
-    depends_on:
-      - broker-1
-      - schema_registry
-    ports:
-      - "8002:8000"
-    environment:
-      SCHEMAREGISTRY_URL: 'http://${DOCKER_HOST_IP}:8081'
