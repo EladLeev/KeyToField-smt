@@ -12,7 +12,7 @@
 
     <!-- Define project properties -->
     <properties>
-        <kafka.version>3.7.0</kafka.version>
+        <kafka.version>3.8.0</kafka.version>
         <java.version>1.8</java.version>
     </properties>
 
