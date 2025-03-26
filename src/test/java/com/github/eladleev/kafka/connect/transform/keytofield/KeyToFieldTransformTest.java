@@ -61,6 +61,7 @@ public class KeyToFieldTransformTest {
         Map<String, String> configMap = new HashMap<>();
         configMap.put("field.name", "primaryKey");
         configMap.put("field.delimiter", "_");
+        configMap.put("schema.cache.size", "16");
         xform.configure(configMap);
 
         Schema keySchema = SchemaBuilder.struct()

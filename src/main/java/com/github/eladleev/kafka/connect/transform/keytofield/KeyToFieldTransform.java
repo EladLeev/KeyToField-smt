@@ -25,12 +25,15 @@ import static org.apache.kafka.connect.transforms.util.Requirements.requireStruc
 public class KeyToFieldTransform<R extends ConnectRecord<R>> implements Transformation<R> {
 
     public static final String OVERVIEW_DOC = "Add the record key to the value as a named field.";
+    private static final int DEFAULT_CACHE_SIZE = 16;
 
     public static final ConfigDef CONFIG_DEF = new ConfigDef()
             .define("field.name", ConfigDef.Type.STRING, "kafkaKey", ConfigDef.Importance.HIGH,
                     "Name of the field to insert the Kafka key to")
             .define("field.delimiter", ConfigDef.Type.STRING, "-", ConfigDef.Importance.LOW,
-                    "Delimiter to use when concatenating the key fields");
+                    "Delimiter to use when concatenating the key fields")
+            .define("schema.cache.size", ConfigDef.Type.INT, DEFAULT_CACHE_SIZE, ConfigDef.Importance.LOW,
+                "Size of the schema update cache");
 
     private static final String PURPOSE = "adding key to record";
     private static final Logger LOGGER = LoggerFactory.getLogger(KeyToFieldTransform.class);
@@ -43,7 +46,8 @@ public class KeyToFieldTransform<R extends ConnectRecord<R>> implements Transfor
         final SimpleConfig config = new SimpleConfig(CONFIG_DEF, props);
         fieldName = config.getString("field.name");
         fieldDelimiter = config.getString("field.delimiter");
-        schemaUpdateCache = new SynchronizedCache<>(new LRUCache<>(16));
+        int schemaCacheSize = config.getInt("schema.cache.size");
+        schemaUpdateCache = new SynchronizedCache<>(new LRUCache<>(schemaCacheSize));
     }
 
     @Override
@@ -165,7 +169,7 @@ public class KeyToFieldTransform<R extends ConnectRecord<R>> implements Transfor
         LOGGER.trace("build the updated schema");
         SchemaBuilder newSchemabuilder = SchemaUtil.copySchemaBasics(schema, SchemaBuilder.struct());
         for (org.apache.kafka.connect.data.Field field : schema.fields()) {
-                newSchemabuilder.field(field.name(), field.schema());
+            newSchemabuilder.field(field.name(), field.schema());
         }
 
         LOGGER.trace("adding the new field: {}", fieldName);
