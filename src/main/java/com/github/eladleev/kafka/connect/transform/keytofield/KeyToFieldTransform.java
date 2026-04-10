@@ -10,7 +10,7 @@ import org.apache.kafka.connect.data.Schema;
 import org.apache.kafka.connect.data.SchemaBuilder;
 import org.apache.kafka.connect.data.Struct;
 import org.apache.kafka.connect.transforms.Transformation;
-import org.apache.kafka.connect.transforms.util.SimpleConfig;
+import org.apache.kafka.common.config.AbstractConfig;
 import org.apache.kafka.connect.transforms.util.SchemaUtil;
 
 import org.slf4j.Logger;
@@ -43,7 +43,7 @@ public class KeyToFieldTransform<R extends ConnectRecord<R>> implements Transfor
 
     @Override
     public void configure(Map<String, ?> props) {
-        final SimpleConfig config = new SimpleConfig(CONFIG_DEF, props);
+        final AbstractConfig config = new AbstractConfig(CONFIG_DEF, props);
         fieldName = config.getString("field.name");
         fieldDelimiter = config.getString("field.delimiter");
         int schemaCacheSize = config.getInt("schema.cache.size");
